@@ -60,7 +60,7 @@ multiqc .
 ```
 [Check the report](multiqc_report_roya_trimmed.html)
 
-## Step4: Alignment to the Reference Genome 
+## Step 4: Alignment to the Reference Genome 
 ### Create a folder for results. 
 ```bash
 cd data2/lnoboa/roya_transcriptomics/
@@ -91,7 +91,106 @@ for f in *.sam; do
     base=$(basename "$f" .sam)
     samtools sort "$f" -o "${base}_sorted.bam"
 ```
-### Step 5: Quantification of Mapped Reads. 
+## Step 5: Quantification of Mapped Reads. 
 ```bash
 featureCounts -p -t exon -g gene_id   -a /data2/lnoboa/ref_genome_coffea/genomic.gtf   -o counts_matrix.txt /data2/lnoboa/roya_transcriptomics/mapping_results/*_sorted.bam
 ```
+
+## Step 6: Differential Expression Analysis with DESeq2
+### Install and load the recquired packages. 
+```bash
+if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+BiocManager::install(c("DESeq2", "EnhancedVolcano"))
+install.packages(c("ggplot2", "pheatmap"))
+library(DESeq2)
+library(ggplot2)
+library(EnhancedVolcano)
+library(pheatmap)
+```
+### Set working directory. 
+```r
+setwd("D:/lucianoboa/royatranscriptomics/analysis/featureCounts")
+```
+### Load the count matrix. 
+```r
+countData <- read.table("counts_matrix.txt", header = TRUE, row.names = 1, sep = "\t")
+```
+### Check column names.
+```r
+colnames(countData)
+```
+### Select only the count columns (columns 6 to 19).
+```r
+countData <- countData[, 6:19]
+```
+### Check dimensions of the filtered count matrix.
+```r
+dim(countData)
+```
+```r
+[1] 75881    14
+```
+### Rename columns with simpler sample names.
+```r
+colnames(countData) <- c("H10","H11","H12","H13","H14","H15","H16","H9",
+                         "T1","T4","T5","T6","T7","T8")
+```
+### Define experimental conditions.
+#### Eight samples H = 24 hours, Six samples T = 0 hours.
+```r
+condition <- factor(c(rep("H24", 8), rep("T0", 6)))
+```
+### Create colData with experimental metadata.
+```r
+colData <- data.frame(row.names = colnames(countData),
+                      condition = condition)
+```
+### Assembly of the differential expression matrix.
+```r
+dds <- DESeqDataSetFromMatrix(countData = countData, 
+                              colData = colData, 
+                              design = ~ condition)
+
+dds <- DESeq(dds)
+res <- results(dds, contrast = c("condition", "H24", "T0"))
+res <- res[order(res$padj), ]
+head(res)
+```
+### Top differentially expressed genes (DEGs)
+```r
+head(res)
+```
+#### The following shows the top six genes sorted by adjusted p-value from the DESeq2 analysis (H24 vs T0):
+```r
+log2 fold change (MLE): condition H24 vs T0 
+Wald test p-value: condition H24 vs T0 
+DataFrame with 6 rows and 6 columns
+              baseMean log2FoldChange     lfcSE      stat      pvalue        padj
+LOC113711922  1743.061        5.70644  0.309049   18.4645 3.98535e-76 1.62539e-71
+LOC113695446  2973.581        6.29184  0.370363   16.9883 1.00210e-64 1.44129e-60
+LOC113706933  1380.963        4.13309  0.243337   16.9850 1.06019e-64 1.44129e-60
+LOC113735746  1816.273       -1.73424  0.112012  -15.4827 4.54336e-54 4.63241e-50
+LOC113737160   636.291        2.50899  0.170068   14.7529 2.94895e-49 2.40540e-45
+LOC113695056  8194.214        5.60521  0.382360   14.6595 1.17121e-48 7.96114e-45
+```
+### DESeq2 Summary of Differential Expression (H24 vs T0)
+```r
+summary(res)
+```
+#### The summary below shows the overall statistics from the DESeq2 analysis:
+```r
+Summary of DESeq2 results:
+Total genes with non-zero counts: 47,227
+
+Genes with adjusted p-value < 0.1:
+  - Upregulated (LFC > 0): 6,277 (13%)
+  - Downregulated (LFC < 0): 6,023 (13%)
+
+Other filtering notes:
+  - Outliers [1]: 302 (0.64%)
+      [1] See 'cooksCutoff' argument in ?results
+  - Low counts [2]: 6,438 (14%) (mean count < 2)
+      [2] See 'independentFiltering' argument in ?results
+```
+
+[](plotPCA_roya-transcriptomics.png)
