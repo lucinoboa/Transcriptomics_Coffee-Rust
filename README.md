@@ -192,5 +192,38 @@ Other filtering notes:
   - Low counts [2]: 6,438 (14%) (mean count < 2)
       [2] See 'independentFiltering' argument in ?results
 ```
-
+###  Principal Component Analysis (PCA) of Samples
+```r
+rld <- rlog(dds, blind = TRUE)
+x=plotPCA(rld, intgroup = "condition", pcsToUse = 1:2, ntop = 70000) +
+  geom_text(aes(label = name), vjust = 1) +
+  theme_minimal()
+```
 ![PCA Plot](images/plotPCA_roya-transcriptomics.png)
+
+### Volcano Plot of Differentially Expressed Genes
+```r
+EnhancedVolcano(res,
+                lab = rownames(res),
+                x = "log2FoldChange",
+                y = "pvalue",
+                xlim = c(-35, 35))
+```
+![Enhanced Volcano](images/EnhancedVolcanoPlot_roya-transcriptomics.png)
+
+### MA Plot of Differential Expression
+```r
+plotMA(res,
+       alpha = 0.1,
+       main = "Expression Differences: H24 vs T0",
+       ylim = c(-30, 30))
+```
+![PlotMA](PlotMA_roya-transcriptomics.png)
+
+### Most Differentially Expressed Genes Heatmap
+```r
+top_genes <- row.names(res)[1:20]
+counts_top <- log2(counts(dds, normalized = TRUE)[top_genes,] + 1)
+pheatmap(counts_top, annotation_col = colData)
+```
+![Heatmap](pheatmap_roya-transcriptomics.png)
