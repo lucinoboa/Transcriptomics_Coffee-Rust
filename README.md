@@ -18,6 +18,8 @@ fastqc *.fq.gz -o /data2/lnoboa/roya_transcriptomics/fastqc_cafe_roya/fastqc_raw
 ```bash
 multiqc .
 ```
+[Check the report](multiqc_report_roya_raw_data.html)
+
 
 ## Step 2: Trimming 
 ###Run the Trimmomatic tool to remove low quality reads and adapters. 
@@ -57,6 +59,7 @@ fastqc *.fq.gz -o /data2/lnoboa/roya_transcriptomics/fastqc_cafe_roya/fastqc_tri
 ```bash
 multiqc .
 ```
+[Check the report](multiqc_report_roya_trimmed.html)
 
 ## Step4: Alignment to the Reference Genome 
 ### Create a folder for results. 
