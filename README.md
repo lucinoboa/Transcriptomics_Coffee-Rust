@@ -218,7 +218,7 @@ plotMA(res,
        main = "Expression Differences: H24 vs T0",
        ylim = c(-30, 30))
 ```
-![PlotMA](PlotMA_roya-transcriptomics.png)
+![PlotMA](images/PlotMA_roya-transcriptomics.png)
 
 ### Most Differentially Expressed Genes Heatmap
 ```r
@@ -226,4 +226,4 @@ top_genes <- row.names(res)[1:20]
 counts_top <- log2(counts(dds, normalized = TRUE)[top_genes,] + 1)
 pheatmap(counts_top, annotation_col = colData)
 ```
-![Heatmap](pheatmap_roya-transcriptomics.png)
+![Heatmap](images/pheatmap_roya-transcriptomics.png)
