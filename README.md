@@ -20,7 +20,6 @@ multiqc .
 ```
 [Check the report](multiqc_report_roya_raw_data.html)
 
-
 ## Step 2: Trimming 
 ###Run the Trimmomatic tool to remove low quality reads and adapters. 
 ```bash
@@ -68,6 +67,7 @@ cd data2/lnoboa/roya_transcriptomics/
 mkdir mapping_results
 ```
 ### Upload the genome index. 
+[Reference genome](https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_036785885.1/)
 ```bash
 cd /data2/lnoboa/ref_genome_coffea
 hisat2-build -p 4 GCF_036785885.1_Coffea_Arabica_ET-39_HiFi_genomic.fna coffea_index
