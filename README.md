@@ -193,4 +193,4 @@ Other filtering notes:
       [2] See 'independentFiltering' argument in ?results
 ```
 
-[](plotPCA_roya-transcriptomics.png)
+[PCA Plot](plotPCA_roya-transcriptomics.png)
