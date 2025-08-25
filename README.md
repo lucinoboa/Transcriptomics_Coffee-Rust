@@ -8,7 +8,7 @@ cd /data2/lnoboa/roya_transcriptomics/data_cafe_roya/raw_data_roya
 ```
 ### Activate the conda environment. 
 ```bash
-conda activate ______________
+conda activate transcriptomics_env
 ```
 ### Run FastQC to assess the quality of the sequences.  
 ```bash
@@ -48,7 +48,7 @@ cd /data2/lnoboa/roya_transcriptomics/data_cafe_roya/data_trimmed
 ```
 ### Activate the conda environment. 
 ```bash
-conda activate ______________
+conda activate transcriptomics_env
 ```
 ### Run FastQC to assess the quality of the sequences.  
 ```bash
