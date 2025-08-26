@@ -439,7 +439,6 @@ dim(diff_exp)
 ```r
 topTags(diff_exp)
 ```
-
 ```r
 Comparison of groups:  H24-T0 
                  logFC   logCPM       PValue          FDR
@@ -453,4 +452,98 @@ LOC113692795  4.952827 5.372164 3.343495e-33 3.624396e-29
 LOC140014808  5.449834 5.262370 5.680793e-32 5.388303e-28
 LOC140013878 -3.404987 5.641357 4.631570e-31 3.904979e-27
 LOC113714533 -3.083582 5.465033 4.525411e-30 3.433927e-26
+```
+
+### Check the number of top differentially expressed genes
+```r
+dim(topTags(diff_exp))
+```
+```r
+[1] 10  4
+```
+
+### Extract all top differentially expressed genes. 
+```r
+deTab = topTags(diff_exp, n = Inf)$table
+deTab[c(15,30),]
+```
+```r
+              logFC   logCPM       PValue          FDR
+LOC140037741 4.134671 4.507071 6.305664e-28 3.189867e-24
+LOC140005275 6.240319 5.865138 1.839838e-24 4.653626e-21
+```
+
+### Identify significant differentially expressed genes. 
+```r
+deGenes = rownames(deTab)[deTab$FDR < 0.05 & abs(deTab$logFC) > 1]
+```
+
+### Separate induced and suppressed genes. 
+```r
+down=row.names(deTab)[deTab$logFC< -1]
+over=row.names(deTab)[deTab$logFC> 1]
+```
+
+### Summary of differential expression.
+```r
+print(paste("diffentially expressed genes total:", length(deGenes)))
+```
+```r
+[1] "diffentially expressed genes total: 6101"
+```
+```r
+print(paste("number of induced genes:", length(over)))
+```
+```r
+[1] "number of induced genes: 10747"
+```
+```r
+print(paste("number of suppressed genes:", length(down)))
+```
+```r
+[1] "number of suppressed genes: 7815"
+```
+
+### Visualize differential expression with a smear plot. 
+```r
+plotSmear(dge, de.tags=deGenes, ylab = "H24 vs T0")
+```
+![PlotMDS](figures/plotSmear_royatranscriptomics.png)
+
+### Install and load the recquired packages. 
+```r
+install.packages("gplots")
+install.packages("RcolorBrewer")
+library("gplots")
+library("RColorBrewer")
+```
+
+### Normalization of counts. 
+```r
+normalized= cpm(counts)
+normalized_differentials= normalized[deGenes,]
+head(normalized_differentials)
+```
+```r
+                   H10       H11       H12       H13       H14       H15       H16        H9        T1
+LOC113695446 163.22678 151.91690 188.95059 199.14133 127.52400 118.32648  98.02665 208.33153 0.9443005
+LOC113711922  86.89633 110.67080 121.55638  94.53127  94.11296  64.84882  78.16907  78.93553 2.0274687
+LOC113716400  93.20384  99.24393  80.62623 149.06149 147.07102  57.82102  92.06937 150.90461 5.8324442
+LOC113706933  85.26342  44.32589  85.59681  88.01277  54.51932  61.07854  65.79834  81.58437 5.3602940
+LOC113694867  97.87844 122.75968 253.15676 147.49076  76.25211  86.14336 106.88205 119.75421 7.8043658
+LOC113720646  46.87407  58.97646 115.55741  56.67687  72.09915  44.85125  59.89474  64.41987 5.1658792
+                    T2       T3        T4       T5       T6       T7       T8
+LOC113695446  1.231765 2.263009 0.7947356 2.143784 5.114017 1.763028 1.557850
+LOC113711922  0.821177 3.394513 0.7947356 2.593287 3.187959 1.133375 1.097576
+LOC113716400  6.980004 3.780254 4.0348114 3.042790 7.272530 1.637098 2.018124
+LOC113706933  1.554371 8.409135 3.1789423 5.843539 4.416651 3.903848 2.336775
+LOC113694867 10.030090 4.063130 4.2182119 7.676129 5.313264 1.920442 9.170072
+LOC113720646  5.132356 5.837534 4.1570784 3.561447 2.125306 2.266751 8.107901
+```
+### Heatmap of Normalized Counts for Differentially Expressed Genes
+```r
+heatmap(normalized_differentials, Colv = NA)
+```
+```r
+![PlotMDS](figures/heatmap_normalized-differentiales_royatranscriptomics.png)
 ```
