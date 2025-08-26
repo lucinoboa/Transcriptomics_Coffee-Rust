@@ -350,7 +350,7 @@ col(names)
 [13] "/data2/lnoboa/roya_transcriptomics/mapping_results/T8_sorted.bam" HERE
 ```
 
-## Exploratory Data Analysis with EdgeR 
+## Step 8: Exploratory Data Analysis with EdgeR 
 
 ### Set working directory.
 ```r
@@ -614,3 +614,6 @@ setdiff(WTover, ste12over)
 [19] "LOC113731519" "LOC113688069" "LOC113715392" "LOC113724950" "LOC113687849" "LOC113741897"
 [25] "LOC113734586" "LOC113719255" "LOC113694269" "LOC140035076" "LOC140005275"
 ```
+
+## Step 9: Comparison of groups. 
+
