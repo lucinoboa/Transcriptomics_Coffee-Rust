@@ -600,5 +600,20 @@ $comparison
 
 $genes
 NULL
+```
 
+### Comparison of top induced genes between samplimng times. 
+```r
+diff_exp2 = exactTest(dgeNorm, dispersion = dgeNorm$common.dispersion, pair = c("H24", "T0" ))
+deTab2 = topTags(diff_exp2, n=Inf)$table
+WTover= head(rownames(deTab), 30)
+ste12over= head(rownames(deTab2), 30)
+setdiff(WTover, ste12over)
+```
+```r
+ [1] "LOC113695446" "LOC113711922" "LOC113716400" "LOC113706933" "LOC113694867" "LOC113720646"
+ [7] "LOC113692795" "LOC140014808" "LOC140013878" "LOC113714533" "LOC113734025" "LOC113729988"
+[13] "LOC113702309" "LOC140036768" "LOC140037741" "LOC113730387" "LOC113710329" "LOC140003932"
+[19] "LOC113731519" "LOC113688069" "LOC113715392" "LOC113724950" "LOC113687849" "LOC113741897"
+[25] "LOC113734586" "LOC113719255" "LOC113694269" "LOC140035076" "LOC140005275"
 ```
