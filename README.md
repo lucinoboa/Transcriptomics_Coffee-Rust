@@ -113,27 +113,52 @@ setwd("D:/lucianoboa/royatranscriptomics/analysis/featureCounts")
 ```
 ### Load the count matrix. 
 ```r
-countData <- read.table("counts_matrix.txt", header = TRUE, row.names = 1, sep = "\t")
+countData <- read.table("counts_matrix_complete_royatranscriptomics.txt", header=TRUE, row.names=1, sep="\t")
 ```
 ### Check column names.
 ```r
 colnames(countData)
 ```
-### Select only the count columns (columns 6 to 19).
+
 ```r
-countData <- countData[, 6:19]
+ [1] "Chr"                                                               
+ [2] "Start"                                                             
+ [3] "End"                                                               
+ [4] "Strand"                                                            
+ [5] "Length"                                                            
+ [6] "X.data2.lnoboa.roya_transcriptomics.mapping_results.H10_sorted.bam"
+ [7] "X.data2.lnoboa.roya_transcriptomics.mapping_results.H11_sorted.bam"
+ [8] "X.data2.lnoboa.roya_transcriptomics.mapping_results.H12_sorted.bam"
+ [9] "X.data2.lnoboa.roya_transcriptomics.mapping_results.H13_sorted.bam"
+[10] "X.data2.lnoboa.roya_transcriptomics.mapping_results.H14_sorted.bam"
+[11] "X.data2.lnoboa.roya_transcriptomics.mapping_results.H15_sorted.bam"
+[12] "X.data2.lnoboa.roya_transcriptomics.mapping_results.H16_sorted.bam"
+[13] "X.data2.lnoboa.roya_transcriptomics.mapping_results.H9_sorted.bam" 
+[14] "X.data2.lnoboa.roya_transcriptomics.mapping_results.T1_sorted.bam" 
+[15] "X.data2.lnoboa.roya_transcriptomics.mapping_results.T2_sorted.bam" 
+[16] "X.data2.lnoboa.roya_transcriptomics.mapping_results.T3_sorted.bam" 
+[17] "X.data2.lnoboa.roya_transcriptomics.mapping_results.T4_sorted.bam" 
+[18] "X.data2.lnoboa.roya_transcriptomics.mapping_results.T5_sorted.bam" 
+[19] "X.data2.lnoboa.roya_transcriptomics.mapping_results.T6_sorted.bam" 
+[20] "X.data2.lnoboa.roya_transcriptomics.mapping_results.T7_sorted.bam" 
+[21] "X.data2.lnoboa.roya_transcriptomics.mapping_results.T8_sorted.bam" 
+```
+
+### Select only the count columns (columns 6 to 21).
+```r
+countData <- countData[, 6:21]
 ```
 ### Check dimensions of the filtered count matrix.
 ```r
 dim(countData)
 ```
 ```r
-[1] 75881    14
+[1] 75881    16
 ```
 ### Rename columns with simpler sample names.
 ```r
 colnames(countData) <- c("H10","H11","H12","H13","H14","H15","H16","H9",
-                         "T1","T4","T5","T6","T7","T8")
+                         "T1","T2","T3","T4","T5","T6","T7","T8")
 ```
 ### Define experimental conditions.
 #### Eight samples H = 24 hours, Six samples T = 0 hours.
@@ -160,18 +185,22 @@ head(res)
 ```r
 head(res)
 ```
+
+
+
 #### The following shows the top six genes sorted by adjusted p-value from the DESeq2 analysis (H24 vs T0):
 ```r
 log2 fold change (MLE): condition H24 vs T0 
 Wald test p-value: condition H24 vs T0 
 DataFrame with 6 rows and 6 columns
               baseMean log2FoldChange     lfcSE      stat      pvalue        padj
-LOC113711922  1743.061        5.70644  0.309049   18.4645 3.98535e-76 1.62539e-71
-LOC113695446  2973.581        6.29184  0.370363   16.9883 1.00210e-64 1.44129e-60
-LOC113706933  1380.963        4.13309  0.243337   16.9850 1.06019e-64 1.44129e-60
-LOC113735746  1816.273       -1.73424  0.112012  -15.4827 4.54336e-54 4.63241e-50
-LOC113737160   636.291        2.50899  0.170068   14.7529 2.94895e-49 2.40540e-45
-LOC113695056  8194.214        5.60521  0.382360   14.6595 1.17121e-48 7.96114e-45
+             <numeric>      <numeric> <numeric> <numeric>   <numeric>   <numeric>
+LOC113695446  2642.788        6.34457  0.329462   19.2573 1.22515e-82 5.04478e-78
+LOC113711922  1553.615        5.64186  0.311725   18.0988 3.25437e-73 6.70026e-69
+LOC113741897   381.172       -3.11981  0.183416  -17.0095 6.97968e-65 9.58007e-61
+LOC113735746  1925.477       -1.66895  0.103200  -16.1720 7.94409e-59 8.17785e-55
+LOC113694269   897.030        2.33362  0.159588   14.6228 2.00883e-48 1.65435e-44
+LOC113716400  1896.846        4.69133  0.328411   14.2850 2.71582e-46 1.86382e-42
 ```
 ### DESeq2 Summary of Differential Expression (H24 vs T0)
 ```r
@@ -179,18 +208,15 @@ summary(res)
 ```
 #### The summary below shows the overall statistics from the DESeq2 analysis:
 ```r
-Summary of DESeq2 results:
-Total genes with non-zero counts: 47,227
-
-Genes with adjusted p-value < 0.1:
-  - Upregulated (LFC > 0): 6,277 (13%)
-  - Downregulated (LFC < 0): 6,023 (13%)
-
-Other filtering notes:
-  - Outliers [1]: 302 (0.64%)
-      [1] See 'cooksCutoff' argument in ?results
-  - Low counts [2]: 6,438 (14%) (mean count < 2)
-      [2] See 'independentFiltering' argument in ?results
+out of 47408 with nonzero total read count
+adjusted p-value < 0.1
+LFC > 0 (up)       : 7022, 15%
+LFC < 0 (down)     : 7033, 15%
+outliers [1]       : 0, 0%
+low counts [2]     : 6634, 14%
+(mean count < 2)
+[1] see 'cooksCutoff' argument of ?results
+[2] see 'independentFiltering' argument of ?results
 ```
 ###  Principal Component Analysis (PCA) of Samples
 ```r
@@ -199,7 +225,7 @@ x=plotPCA(rld, intgroup = "condition", pcsToUse = 1:2, ntop = 70000) +
   geom_text(aes(label = name), vjust = 1) +
   theme_minimal()
 ```
-![PCA Plot]
+![PCA Plot](figures/plotPCA_royatranscriptomics.png)
 
 ### Volcano Plot of Differentially Expressed Genes
 ```r
@@ -209,16 +235,16 @@ EnhancedVolcano(res,
                 y = "pvalue",
                 xlim = c(-35, 35))
 ```
-![Enhanced Volcano]
+![Enhanced Volcano](figures/Volcanoplot_royatranscriptomics.png)
 
 ### MA Plot of Differential Expression
 ```r
-plotMA(res,
-       alpha = 0.1,
-       main = "Expression Differences: H24 vs T0",
-       ylim = c(-30, 30))
+DESeq2::plotMA(res, alpha = 0.1,
+               main = "Expression Differences: H24 vs T0",
+               ylim = c(-30, 30))
+
 ```
-![PlotMA]
+![PlotMA](figures/plotMA_royatranscriptomics.png)
 
 ### Most Differentially Expressed Genes Heatmap
 ```r
@@ -226,9 +252,9 @@ top_genes <- row.names(res)[1:20]
 counts_top <- log2(counts(dds, normalized = TRUE)[top_genes,] + 1)
 pheatmap(counts_top, annotation_col = colData)
 ```
-![Heatmap]
+![Heatmap](figures/pheatmap_royatranscriptomics.png)
 
-## Step 7: Differential Gene Expression Analysis 
+## Step 7: Explore and organize the data. 
 
 ### Install and load the recquired packages. 
 ```r
@@ -240,32 +266,98 @@ library(limma)
 library(edgeR)
 ```
 
-### Set working directory in R. 
+### Set working directory.
 ```r
 setwd("D:/lucianoboa/royatranscriptomics/analysis/featureCounts")
 ```
 
 ### Create a directory to store the analysis results.  
+```r
 outpath = "/lucianoboa/royatranscriptomics/analysis/results/"
 dir.create(outpath, showWarnings=FALSE)
+```
 
 ### Load the count matrix.
+```r
 readLines("counts_matrix.txt", n = 5)
 counts <- read.table("counts_matrix.txt", 
                          header = TRUE, 
                          sep = "\t", 
                          comment.char = "#", 
                          check.names = FALSE)
+```
 
 ### Remove annotation columns (Chr, Start, End, Strand, Length).
+```r
 counts <- counts_raw[, -(2:6)]
+```
+
+```r
+HERE
+```
 
 ### Set Geneid as row names and remove the redundant column.
+```r
 rownames(counts) <- counts_raw$Geneid
 counts <- counts[, -1]
+```
 
-### Preview of the first rows of the matrix. 
+```r
+HERE
+```
+
+### Preview the first rows of the matrix. 
+```r
 head(counts)
+```
 
+```r
+HERE
+```
 
+### Check the dimensions of the counts matrix
+#### View the number of genes (rows) and samples (columns) included in the analysis.
+```r
+dim(counts)
+```
 
+```r
+HERE
+```
+
+### Check the column names of the counts matrix to verify the sample names
+```r
+col(names)
+```
+
+```r
+HERE
+```
+
+## Exploratory Data Analysis with EdgeR 
+
+### Set working directory.
+```r
+setwd("D:/lucianoboa/royatranscriptomics/analysis/featureCounts")
+```
+
+### Extract the sample group by removing the last two characters (replicate indicator).
+grp = sub("..$", "", colnames(counts))
+
+```r
+HERE
+```
+
+### Create the DGEList object. 
+dge = DGEList(counts = counts, group = grp)
+
+```r
+HERE
+```
+
+### View the Multi-Dimensional Scaling (MDS). 
+plotMDS(dge)
+
+```r
+![PlotMDS]()
+```
