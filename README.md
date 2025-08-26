@@ -279,8 +279,8 @@ dir.create(outpath, showWarnings=FALSE)
 
 ### Load the count matrix.
 ```r
-readLines("counts_matrix.txt", n = 5)
-counts <- read.table("counts_matrix.txt", 
+readLines("counts_matrix_complete_royatranscriptomics.txt", n = 5)
+counts <- read.table("counts_matrix_complete_royatranscriptomics.txt", 
                          header = TRUE, 
                          sep = "\t", 
                          comment.char = "#", 
@@ -292,18 +292,16 @@ counts <- read.table("counts_matrix.txt",
 counts <- counts_raw[, -(2:6)]
 ```
 
+### Simplify and make the data more readable. 
 ```r
-HERE
-```
+colnames(countData) <- c("H10","H11","H12","H13","H14","H15","H16","H9",
+                         "T1","T2","T3","T4","T5","T6","T7","T8")
+```r
 
 ### Set Geneid as row names and remove the redundant column.
 ```r
 rownames(counts) <- counts_raw$Geneid
 counts <- counts[, -1]
-```
-
-```r
-HERE
 ```
 
 ### Preview the first rows of the matrix. 
@@ -312,7 +310,13 @@ head(counts)
 ```
 
 ```r
-HERE
+              H10  H11  H12  H13  H14  H15  H16   H9   T1   T2   T3   T4   T5   T6   T7  T8
+LOC113687214    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0   0
+LOC113696942   94  196   70  101  106  137  244   55   91   65   52  103   31   31   72  96
+LOC113688401   10    0    0    0    0    0    0    0    0    0    0    0    0    0    0   0
+LOC140003795 1667 1208 1623 1730 1354 1283 1562 1625 1088 1599 1864 1270 1247 1064 1195 981
+LOC140008913  782  998  560  434  350 1080  909  620  645  466  468  665  706  470  662 505
+LOC113687412   11    0    0    0    0    0   18   15   19    0   13    3   13   11    3  11
 ```
 
 ### Check the dimensions of the counts matrix
@@ -322,7 +326,7 @@ dim(counts)
 ```
 
 ```r
-HERE
+[1] 75881    13
 ```
 
 ### Check the column names of the counts matrix to verify the sample names
@@ -331,7 +335,19 @@ col(names)
 ```
 
 ```r
-HERE
+[1] "/data2/lnoboa/roya_transcriptomics/mapping_results/H11_sorted.bam"
+ [2] "/data2/lnoboa/roya_transcriptomics/mapping_results/H12_sorted.bam"
+ [3] "/data2/lnoboa/roya_transcriptomics/mapping_results/H13_sorted.bam"
+ [4] "/data2/lnoboa/roya_transcriptomics/mapping_results/H14_sorted.bam"
+ [5] "/data2/lnoboa/roya_transcriptomics/mapping_results/H15_sorted.bam"
+ [6] "/data2/lnoboa/roya_transcriptomics/mapping_results/H16_sorted.bam"
+ [7] "/data2/lnoboa/roya_transcriptomics/mapping_results/H9_sorted.bam" 
+ [8] "/data2/lnoboa/roya_transcriptomics/mapping_results/T1_sorted.bam" 
+ [9] "/data2/lnoboa/roya_transcriptomics/mapping_results/T4_sorted.bam" 
+[10] "/data2/lnoboa/roya_transcriptomics/mapping_results/T5_sorted.bam" 
+[11] "/data2/lnoboa/roya_transcriptomics/mapping_results/T6_sorted.bam" 
+[12] "/data2/lnoboa/roya_transcriptomics/mapping_results/T7_sorted.bam" 
+[13] "/data2/lnoboa/roya_transcriptomics/mapping_results/T8_sorted.bam" HERE
 ```
 
 ## Exploratory Data Analysis with EdgeR 
@@ -340,24 +356,101 @@ HERE
 ```r
 setwd("D:/lucianoboa/royatranscriptomics/analysis/featureCounts")
 ```
-
 ### Extract the sample group by removing the last two characters (replicate indicator).
 grp = sub("..$", "", colnames(counts))
-
-```r
-HERE
-```
 
 ### Create the DGEList object. 
 dge = DGEList(counts = counts, group = grp)
 
+### View the Multi-Dimensional Scaling (MDS). 
 ```r
-HERE
+plotMDS(dge)
 ```
 
-### View the Multi-Dimensional Scaling (MDS). 
-plotMDS(dge)
+![PlotMDS](plotMDS_royatranscriptomics.png)
+
+### Data normalization through edgeR. 
+```r
+dgeNorm = calcNormFactors(dge)
+dgeNorm$samples
+```
 
 ```r
-![PlotMDS]()
+ group lib.size norm.factors
+H10     H 31232620    1.0355758
+H11     H 34742678    0.8907344
+H12     H 29171648    1.0319465
+H13     H 38199002    0.8062668
+H14     H 32025344    0.8760510
+H15     H 33154034    1.2281655
+H16     H 37265378    0.9917321
+H9        37752327    1.0569000
+T1        36005488    1.0249644
+T2        34097401    0.9670438
+T3        38886281    1.0050208
+T4        32715284    1.0499260
+T5        28920829    1.0582333
+T6        30113315    1.0083636
+T7        31763529    1.0218342
+T8        28244054    1.0130986
+```
+
+### Estimate the overall dispersion of the dataset. 
+```r
+dgeNorm$common.dispersion
+```
+
+```r
+[1] 0.5996255
+```
+
+### Perform a differential expression analysis between two variables. 
+```r
+diff_exp <- exactTest(dge, pair = c("T0", "H24"))
+diff_exp
+```
+```r
+An object of class "DGEExact"
+$table
+                 logFC    logCPM     PValue
+LOC113687214 0.0000000 -4.063864 1.00000000
+LOC113696942 0.8709027  1.563622 0.06116436
+LOC113688401 3.5003518 -3.663351 0.15983991
+LOC140003795 0.2313062  5.396400 0.26304196
+LOC140008913 0.2703101  4.270295 0.28083850
+75876 more rows ...
+
+$comparison
+[1] "T0"  "H24"
+
+$genes
+NULL
+```
+
+### Check the number of genes and statistics columns. 
+```r
+dim(diff_exp)
+```
+```r
+[1] 75881     3
+```
+
+### Preview the top differentially expressed genes sorted by significance.
+```r
+topTags(diff_exp)
+```
+
+```text
+Comparison of groups:  H24-T0 
+                 logFC   logCPM       PValue          FDR
+LOC113695446  6.379382 6.358264 8.116179e-59 6.158638e-54
+LOC113711922  5.675303 5.593649 2.053176e-53 7.789851e-49
+LOC113716400  4.740248 5.892000 3.132200e-37 7.922483e-33
+LOC113706933  4.077828 5.264267 1.359062e-36 2.578174e-32
+LOC113694867  4.391010 6.089169 6.075053e-35 9.219622e-31
+LOC113720646  3.896888 5.156499 4.210552e-34 5.325015e-30
+LOC113692795  4.952827 5.372164 3.343495e-33 3.624396e-29
+LOC140014808  5.449834 5.262370 5.680793e-32 5.388303e-28
+LOC140013878 -3.404987 5.641357 4.631570e-31 3.904979e-27
+LOC113714533 -3.083582 5.465033 4.525411e-30 3.433927e-26
 ```
