@@ -367,7 +367,7 @@ dge = DGEList(counts = counts, group = grp)
 plotMDS(dge)
 ```
 
-![PlotMDS](plotMDS_royatranscriptomics.png)
+![PlotMDS](figures/plotMDS_royatranscriptomics.png)
 
 ### Data normalization through edgeR. 
 ```r
@@ -440,7 +440,7 @@ dim(diff_exp)
 topTags(diff_exp)
 ```
 
-```text
+```r
 Comparison of groups:  H24-T0 
                  logFC   logCPM       PValue          FDR
 LOC113695446  6.379382 6.358264 8.116179e-59 6.158638e-54
