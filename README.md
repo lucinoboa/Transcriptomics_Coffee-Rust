@@ -556,4 +556,49 @@ barplot(apply(normalizados_diferenciales,2,sum),las=2, cex.names = 1, col = (1:8
 ```
 ![Barplot_normalized](figures/barplot_normalized_royatranscriptomics.png)
 
-### Barplot of the amount of reads per sample.
+### Principal component anaylisis of the gene expression after rust inoculation. 
+```r
+pca <- princomp(normalized_differentials[,c(1:8)])
+plot(pca$loadings, col=as.factor(colnames(normalized_differentials[,c(1:8)])), pch=19, cex=2, main="PCA of Gene Expression After Rust Inoculation", ylim = c(-0.8,0.8))
+text(pca$loadings, as.vector(colnames(normalized_differentials[,c(1:8)])), pos=3, cex=0.8)
+```
+![PCA_H24](figures/PCA_H24.png)
+
+### Volcano plot of differential expression. 
+```r
+with(deTab, plot(logFC, -log10(FDR), pch=20, cex=0.8, col="black", main="Before (T0) vs After (T24) Rust Inoculation", xlim=c(-8, 8), ylim=c(0,60)))
+text(deTab[1:20,]$logFC,-log(deTab[1:20,]$FDR,10),labels=rownames(deTab[1:20,]),cex=0.7,pos=1)
+with(subset(deTab, FDR<.01 & abs(logFC)>2), points(logFC, -log10(FDR), pch=20, cex=0.5, col="green"))
+abline(v=2,lty=2, col="blue")
+abline(v=-2,lty=2, col="blue")
+legend("bottomright","Up_regulated",cex=1)
+legend("bottomleft","Down_regulated",cex=1)
+```
+![VolcanoPlot_normalized](VolcanoPlot_normalized_royatranscriptomics.png)
+
+```r
+diff_exp2 = exactTest(dgeNorm, dispersion = dgeNorm$common.dispersion, pair = c("H24", "T0" ))
+deTab2 = topTags(diff_exp2, n=Inf)$table
+WTover= head(rownames(deTab), 30)
+ste12over= head(rownames(deTab2), 30)
+setdiff(WTover, ste12over)
+diff_exp
+```
+```r
+An object of class "DGEExact"
+$table
+                 logFC    logCPM     PValue
+LOC113687214 0.0000000 -4.063864 1.00000000
+LOC113696942 0.8709027  1.563622 0.06116436
+LOC113688401 3.5003518 -3.663351 0.15983991
+LOC140003795 0.2313062  5.396400 0.26304196
+LOC140008913 0.2703101  4.270295 0.28083850
+75876 more rows ...
+
+$comparison
+[1] "T0"  "H24"
+
+$genes
+NULL
+
+```
