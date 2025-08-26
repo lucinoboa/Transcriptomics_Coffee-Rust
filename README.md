@@ -540,8 +540,20 @@ LOC113706933  1.554371 8.409135 3.1789423 5.843539 4.416651 3.903848 2.336775
 LOC113694867 10.030090 4.063130 4.2182119 7.676129 5.313264 1.920442 9.170072
 LOC113720646  5.132356 5.837534 4.1570784 3.561447 2.125306 2.266751 8.107901
 ```
-### Heatmap of Normalized Counts for Differentially Expressed Genes
+### Heatmap of normalized counts for differentially expressed genes.
 ```r
 heatmap(normalized_differentials, Colv = NA)
 ```
 ![Heatmap_normalized](figures/heatmap_normalized-differentiales_royatranscriptomics.png)
+
+### Comparison of normalized and non-normalized results. 
+
+# pendiente porque no sale bien el grafico 
+
+### Barplot of the amount of reads per sample. 
+```r
+barplot(apply(normalizados_diferenciales,2,sum),las=2, cex.names = 1, col = (1:8))
+```
+![Barplot_normalized](figures/barplot_normalized_royatranscriptomics.png)
+
+### Barplot of the amount of reads per sample.
