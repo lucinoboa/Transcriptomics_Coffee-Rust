@@ -545,5 +545,5 @@ LOC113720646  5.132356 5.837534 4.1570784 3.561447 2.125306 2.266751 8.107901
 heatmap(normalized_differentials, Colv = NA)
 ```
 ```r
-![PlotMDS](figures/heatmap_normalized-differentiales_royatranscriptomics.png)
+![Heatmap_normalized](figures/heatmap_normalized-differentiales_royatranscriptomics.png)
 ```
