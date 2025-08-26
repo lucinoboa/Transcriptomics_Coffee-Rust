@@ -599,7 +599,7 @@ $genes
 NULL
 ```
 
-### Comparison of top induced genes between samplimng times. 
+### Comparison of top induced genes between sampling times. 
 ```r
 diff_exp2 = exactTest(dgeNorm, dispersion = dgeNorm$common.dispersion, pair = c("H24", "T0" ))
 deTab2 = topTags(diff_exp2, n=Inf)$table
