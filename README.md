@@ -199,7 +199,7 @@ x=plotPCA(rld, intgroup = "condition", pcsToUse = 1:2, ntop = 70000) +
   geom_text(aes(label = name), vjust = 1) +
   theme_minimal()
 ```
-![PCA Plot](images/plotPCA_roya-transcriptomics.png)
+![PCA Plot]
 
 ### Volcano Plot of Differentially Expressed Genes
 ```r
@@ -209,7 +209,7 @@ EnhancedVolcano(res,
                 y = "pvalue",
                 xlim = c(-35, 35))
 ```
-![Enhanced Volcano](images/EnhancedVolcanoPlot_roya-transcriptomics.png)
+![Enhanced Volcano]
 
 ### MA Plot of Differential Expression
 ```r
@@ -218,7 +218,7 @@ plotMA(res,
        main = "Expression Differences: H24 vs T0",
        ylim = c(-30, 30))
 ```
-![PlotMA](images/PlotMA_roya-transcriptomics.png)
+![PlotMA]
 
 ### Most Differentially Expressed Genes Heatmap
 ```r
@@ -226,4 +226,46 @@ top_genes <- row.names(res)[1:20]
 counts_top <- log2(counts(dds, normalized = TRUE)[top_genes,] + 1)
 pheatmap(counts_top, annotation_col = colData)
 ```
-![Heatmap](images/pheatmap_roya-transcriptomics.png)
+![Heatmap]
+
+## Step 7: Differential Gene Expression Analysis 
+
+### Install and load the recquired packages. 
+```r
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install("edgeR")
+BiocManager::install("limma")
+library(limma)
+library(edgeR)
+```
+
+### Set working directory in R. 
+```r
+setwd("D:/lucianoboa/royatranscriptomics/analysis/featureCounts")
+```
+
+### Create a directory to store the analysis results.  
+outpath = "/lucianoboa/royatranscriptomics/analysis/results/"
+dir.create(outpath, showWarnings=FALSE)
+
+### Load the count matrix.
+readLines("counts_matrix.txt", n = 5)
+counts <- read.table("counts_matrix.txt", 
+                         header = TRUE, 
+                         sep = "\t", 
+                         comment.char = "#", 
+                         check.names = FALSE)
+
+### Remove annotation columns (Chr, Start, End, Strand, Length).
+counts <- counts_raw[, -(2:6)]
+
+### Set Geneid as row names and remove the redundant column.
+rownames(counts) <- counts_raw$Geneid
+counts <- counts[, -1]
+
+### Preview of the first rows of the matrix. 
+head(counts)
+
+
+
