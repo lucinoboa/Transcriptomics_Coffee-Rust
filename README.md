@@ -574,7 +574,7 @@ abline(v=-2,lty=2, col="blue")
 legend("bottomright","Up_regulated",cex=1)
 legend("bottomleft","Down_regulated",cex=1)
 ```
-![VolcanoPlotnormalized](VolcanoPlot_normalized_royatranscriptomics.png)
+![VolcanoPlotnormalized](figures/VolcanoPlot_normalized_royatranscriptomics.png)
 
 ```r
 diff_exp2 = exactTest(dgeNorm, dispersion = dgeNorm$common.dispersion, pair = c("H24", "T0" ))
