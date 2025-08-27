@@ -615,5 +615,263 @@ setdiff(WTover, ste12over)
 [25] "LOC113734586" "LOC113719255" "LOC113694269" "LOC140035076" "LOC140005275"
 ```
 
-## Step 9: Comparison of groups. 
+## Step 9: Comparison Between Groups. 
 
+### Setup the libraries and the dataset. 
+```r
+library(DESeq2)
+library(ggplot2)
+library(EnhancedVolcano)
+library(pheatmap)
+setwd("D:/lucianoboa/royatranscriptomics/analysis/featureCounts")
+getwd()
+```
+
+### Setup the count matrix and establish the data frames. 
+```r
+countData <- read.table("counts_matrix_complete_royatranscriptomics.txt", 
+                        header=TRUE, row.names=1, sep="\t")
+
+countData <- countData[, 6:21]
+
+colnames(countData) <- c("H10","H11","H12","H13","H14","H15","H16","H9",
+                         "T1","T2","T3","T4","T5","T6","T7","T8")
+```
+
+### Establish the groups you want to compare. 
+```r
+group <- rep(NA, ncol(countData))
+names(group) <- colnames(countData)
+
+group[c("T1","T2","T3","T4","T5","T6","T7","T8")] <- "Group_1"
+group[c("H9","H11","H13","H14","H16")] <- "Group_2"
+group[c("H10","H12","H15")] <- "Group_3"
+
+group <- factor(group)
+```
+```r
+> group
+    H10     H11     H12     H13     H14     H15     H16      H9      T1      T2      T3      T4      T5 
+Group_3 Group_2 Group_3 Group_2 Group_2 Group_3 Group_2 Group_2 Group_1 Group_1 Group_1 Group_1 Group_1 
+     T6      T7      T8 
+Group_1 Group_1 Group_1 
+Levels: Group_1 Group_2 Group_3
+```
+
+### Setup colData with the groups data. 
+```r
+colData <- data.frame(row.names = colnames(countData),
+                      group = group)
+```
+
+### Create a DESeq2 dataset object using the defined experimental groups. 
+```r
+dds <- DESeqDataSetFromMatrix(countData = countData, 
+                              colData = colData, 
+                              design = ~ group)
+
+dds <- DESeq(dds)
+```
+
+### Perform pairwise comparisons of gene expression between Group_1, Group_2, and Group_3, and organize results by adjusted p-value for significance.
+```r
+res_G1vsG2 <- results(dds, contrast = c("group", "Group_1", "Group_2"))
+res_G1vsG3 <- results(dds, contrast = c("group", "Group_1", "Group_3"))
+res_G2vsG3 <- results(dds, contrast = c("group", "Group_2", "Group_3"))
+
+res_G1vsG2 <- res_G1vsG2[order(res_G1vsG2$padj), ]
+res_G1vsG3 <- res_G1vsG3[order(res_G1vsG3$padj), ]
+res_G2vsG3 <- res_G2vsG3[order(res_G2vsG3$padj), ]
+```
+
+### PCA plot 
+```r
+rld <- rlog(dds, blind = TRUE)
+plotPCA(rld, intgroup = "group") +
+  geom_text(aes(label = name), vjust = 1) +
+  theme_minimal()
+```
+
+![plotPCA_groups](figures/plotPCA_groups.png)
+
+### Enhaced Volcano plots for the comparison between groups. 
+
+```r
+EnhancedVolcano(res_G1vsG2,
+                lab = rownames(res_G1vsG2),
+                x = "log2FoldChange",
+                y = "pvalue",
+                title = "Group_1 vs Group_2")
+```
+![EnhancedVolcano_Groups_G1vsG2](figures/EnhancedVolcano_Groups_G1vsG2.png)
+
+```r
+EnhancedVolcano(res_G1vsG3,
+                lab = rownames(res_G1vsG3),
+                x = "log2FoldChange",
+                y = "pvalue",
+                title = "Group_1 vs Group_3")
+```
+![EnhancedVolcano_Groups_G1vsG3.png](figures/EnhancedVolcano_Groups_G1vsG3.png)
+
+```r
+EnhancedVolcano(res_G2vsG3,
+                lab = rownames(res_G2vsG3),
+                x = "log2FoldChange",
+                y = "pvalue",
+                title = "Group_2 vs Group_3")
+```
+![EnhancedVolcano_Groups_G2vsG3](figures/EnhancedVolcano_Groups_G2vsG3.png)
+
+### MA plots for the comparison between groups. 
+```r
+plotMA(res_G1vsG2, main = "Group_1 vs Group_2", ylim = c(-20, 20))
+```
+![plotMA_Groups_G1vsG2](figures/plotMA_Groups_G1vsG2.png)
+
+```r
+plotMA(res_G1vsG3, main = "Group_1 vs Group_3", ylim = c(-30, 30))
+```
+![plotMA_Groups_G1vsG3](figures/plotMA_Groups_G1vsG3.png)
+
+```r
+plotMA(res_G2vsG3, main = "Group_2 vs Group_3", ylim = c(-30, 30))
+```
+![plotMA_Groups_G2vsG3](figures/plotMA_Groups_G2vsG3.png)
+
+### Heatmap of the most variable genes. 
+```r
+top_genes <- row.names(res_G1vsG2)[1:20]  # puedes cambiar a res_G1vsG3, etc.
+counts_top <- log2(counts(dds, normalized = TRUE)[top_genes,] + 1)
+
+pheatmap(counts_top, 
+         annotation_col = colData, 
+         scale = "row",
+         main = "Top 20 genes - Comparison Between Groups")
+```
+![pheatmap_topgenes_Groups](figures/pheatmap_topgenes_Groups.png)
+
+## Step 10: Comparison of gene expression between high and low rust severity
+
+### Setup the libraries, and the dataset.
+```r
+library(DESeq2)
+library(ggplot2)
+library(EnhancedVolcano)
+library(pheatmap)
+
+setwd("D:/lucianoboa/royatranscriptomics/analysis/featureCounts")
+getwd()
+```
+
+### Setup the count matrix and establish the data frames.
+```r
+countData <- read.table("counts_matrix_complete_royatranscriptomics.txt", 
+                        header=TRUE, row.names=1, sep="\t")
+
+# Select only count columns (columns 6 to 21 in your original file)
+countData <- countData[, 6:21]
+
+# Rename columns to simple names
+colnames(countData) <- c("H10","H11","H12","H13","H14","H15","H16","H9",
+                         "T1","T2","T3","T4","T5","T6","T7","T8")
+```
+### Establish the groups you want to compare. 
+```r
+group <- rep(NA, ncol(countData))
+names(group) <- colnames(countData)
+
+group[c("H13","H14","H15")] <- "High_Severity"
+group[c("H9","H10","H11","H12","H16")] <- "Low_Severity"
+group[c("T1","T2","T3","T4","T5","T6","T7","T8")] <- "Non_infected"
+
+group <- factor(group)
+```
+### Setup colData with the groups data. 
+```r
+colData <- data.frame(row.names = colnames(countData),
+                      group = group)
+```
+
+### Create a DESeq2 dataset object using the defined experimental groups. 
+```r
+dds <- DESeqDataSetFromMatrix(countData = countData, 
+                              colData = colData, 
+                              design = ~ group)
+
+dds <- DESeq(dds)
+```
+### Create a DESeq2 dataset object using the defined experimental groups. 
+```r
+dds <- DESeqDataSetFromMatrix(countData = countData, 
+                              colData = colData, 
+                              design = ~ group)
+
+dds <- DESeq(dds)
+```
+
+### Perform pairwise comparisons of gene expression between Group_1, Group_2, and Group_3, and organize results by adjusted p-value for significance.
+```r
+res_High_vs_Low <- results(dds, contrast = c("group", "High_Severity", "Low_Severity"))
+res_High_vs_Non <- results(dds, contrast = c("group", "High_Severity", "Non_infected"))
+res_Low_vs_Non  <- results(dds, contrast = c("group", "Low_Severity", "Non_infected"))
+
+res_High_vs_Low <- res_High_vs_Low[order(res_High_vs_Low$padj), ]
+res_High_vs_Non <- res_High_vs_Non[order(res_High_vs_Non$padj), ]
+res_Low_vs_Non  <- res_Low_vs_Non[order(res_Low_vs_Non$padj), ]
+```
+### PCA plot 
+```r
+rld <- rlog(dds, blind = TRUE)
+plotPCA(rld, intgroup = "group") +
+  geom_text(aes(label = name), vjust = 1) +
+  theme_minimal()
+```
+
+![plotPCA_severity](figures/plotPCA_severity.png)
+
+### Enhaced Volcano plots for the comparison between rust severity levels. 
+```r
+EnhancedVolcano(res_High_vs_Low,
+                lab = rownames(res_High_vs_Low),
+                x = "log2FoldChange",
+                y = "pvalue",
+                title = "High Severity vs Low Severity")
+```
+![EnhancedVolcano_Severity_HighvsLow](figures/EnhancedVolcano_Severity_HighvsLow.png)
+
+
+### MA plots for the comparison between rust severity levels. 
+```r
+plotMA(res_High_vs_Low, main = "High vs Low Severity", ylim = c(-30, 30))
+```
+![plotMA_severity_highvslow](figures/plotMA_severity_highvslow.png)
+
+
+### Heatmap of the most variable genes of the three groups. 
+```r
+top_genes <- row.names(res_High_vs_Low)[1:20]  # can change to other comparisons
+counts_top <- log2(counts(dds, normalized = TRUE)[top_genes,] + 1)
+
+pheatmap(counts_top, 
+         annotation_col = colData, 
+         scale = "row",
+         main = "High vs Low vs Non-infected")
+```
+![pheatmap_severity_high-low-non.png](figures/pheatmap_severity_high-low-non.png)
+
+
+### Heatmap of the most variable genes of the high and low rust severity samples. 
+```r
+high_low_samples <- colnames(countData)[group %in% c("High_Severity", "Low_Severity")]
+
+counts_top_subset <- counts_top[, high_low_samples]
+
+colData_subset <- colData[high_low_samples, , drop = FALSE]
+
+pheatmap(counts_top_subset, 
+         annotation_col = colData_subset, 
+         scale = "row",
+         main = "High vs Low Rust Severity")
+```
+![Heatmap_severity_highvslow.png](Heatmap_severity_highvslow.png)
