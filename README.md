@@ -874,4 +874,4 @@ pheatmap(counts_top_subset,
          scale = "row",
          main = "High vs Low Rust Severity")
 ```
-![Heatmap_severity_highvslow.png](Heatmap_severity_highvslow.png)
+![Heatmap_severity_highvslow.png](figures/Heatmap_severity_highvslow.png)
