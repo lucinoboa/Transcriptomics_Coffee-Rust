@@ -26,8 +26,8 @@ multiqc .
 TRIMMOMATIC=/home/jupyter-alumno7/.conda/envs/rnseq/bin/trimmomatic
 ADAPTERS=/home/jupyter-alumno7/.conda/envs/rnseq/share/trimmomatic/adapters/TruSeq3-PE.fa
 THREADS=4
-INPUT_DIR=/data2/lnoboa/tricho_transcriptomics/raw_data_tricho
-OUTPUT_DIR=/data2/lnoboa/tricho_transcriptomics/trimmed_tricho
+INPUT_DIR=/data2/lnoboa/roya_transcriptomics/data_cafe_roya/raw_data_roya
+OUTPUT_DIR=/data2/lnoboa/roya_transcriptomics/data_cafe_roya/data_trimmed
 
 for f1 in $INPUT_DIR/*_1.fq.gz; do
     base=$(basename "$f1" _1.fq.gz)
