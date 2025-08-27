@@ -96,7 +96,7 @@ for f in *.sam; do
 featureCounts -p -t exon -g gene_id   -a /data2/lnoboa/ref_genome_coffea/genomic.gtf   -o counts_matrix.txt /data2/lnoboa/roya_transcriptomics/mapping_results/*_sorted.bam
 ```
 
-## Step 6: Differential Expression Analysis with DESeq2
+## Step 6: Differential Expression Analysis with DESeq2 in R
 ### Install and load the recquired packages. 
 ```bash
 if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
@@ -107,7 +107,7 @@ library(ggplot2)
 library(EnhancedVolcano)
 library(pheatmap)
 ```
-### Set working directory. 
+### Set the working directory. 
 ```r
 setwd("D:/lucianoboa/royatranscriptomics/analysis/featureCounts")
 ```
@@ -115,7 +115,7 @@ setwd("D:/lucianoboa/royatranscriptomics/analysis/featureCounts")
 ```r
 countData <- read.table("counts_matrix_complete_royatranscriptomics.txt", header=TRUE, row.names=1, sep="\t")
 ```
-### Check column names.
+### Check the column names.
 ```r
 colnames(countData)
 ```
@@ -185,8 +185,6 @@ head(res)
 ```r
 head(res)
 ```
-
-
 
 #### The following shows the top six genes sorted by adjusted p-value from the DESeq2 analysis (H24 vs T0):
 ```r
