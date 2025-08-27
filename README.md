@@ -737,7 +737,7 @@ plotMA(res_G1vsG3, main = "Group_1 vs Group_3", ylim = c(-30, 30))
 ```r
 plotMA(res_G2vsG3, main = "Group_2 vs Group_3", ylim = c(-30, 30))
 ```
-![plotMA_Groups_G2vsG3](figures/plotMA_Groups_G2vsG3.png)
+![plotMA_Groups_G2vsG3](figures/plotMA_Groups_G12vsG3.png)
 
 ### Heatmap of the most variable genes. 
 ```r
