@@ -294,7 +294,7 @@ counts <- counts_raw[, -(2:6)]
 ```r
 colnames(countData) <- c("H10","H11","H12","H13","H14","H15","H16","H9",
                          "T1","T2","T3","T4","T5","T6","T7","T8")
-```r
+```
 
 ### Set Geneid as row names and remove the redundant column.
 ```r
@@ -364,7 +364,6 @@ dge = DGEList(counts = counts, group = grp)
 ```r
 plotMDS(dge)
 ```
-
 ![PlotMDS](figures/plotMDS_royatranscriptomics.png)
 
 ### Data normalization through edgeR. 
