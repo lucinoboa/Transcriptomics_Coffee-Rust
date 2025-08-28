@@ -672,12 +672,12 @@ dds <- DESeq(dds)
 
 ### Perform pairwise comparisons of gene expression between Group_1, Group_2, and Group_3, and organize results by adjusted p-value for significance.
 ```r
-res_G1vsG2 <- results(dds, contrast = c("group", "Group_1", "Group_2"))
-res_G1vsG3 <- results(dds, contrast = c("group", "Group_1", "Group_3"))
+res_G2vsG1 <- results(dds, contrast = c("group", "Group_2", "Group_1"))
+res_G3vsG1 <- results(dds, contrast = c("group", "Group_3", "Group_1"))
 res_G2vsG3 <- results(dds, contrast = c("group", "Group_2", "Group_3"))
 
-res_G1vsG2 <- res_G1vsG2[order(res_G1vsG2$padj), ]
-res_G1vsG3 <- res_G1vsG3[order(res_G1vsG3$padj), ]
+res_G2vsG1 <- res_G2vsG1[order(res_G2vsG1$padj), ]
+res_G3vsG1 <- res_G3vsG1[order(res_G3vsG1$padj), ]
 res_G2vsG3 <- res_G2vsG3[order(res_G2vsG3$padj), ]
 ```
 
@@ -694,22 +694,22 @@ plotPCA(rld, intgroup = "group") +
 ### Enhaced Volcano plots for the comparison between groups. 
 
 ```r
-EnhancedVolcano(res_G1vsG2,
-                lab = rownames(res_G1vsG2),
+EnhancedVolcano(res_G2vsG1,
+                lab = rownames(res_G2vsG1),
                 x = "log2FoldChange",
                 y = "pvalue",
-                title = "Group_1 vs Group_2")
+                title = "Group_2 vs Group_1")
 ```
-![EnhancedVolcano_Groups_G1vsG2](figures/EnhancedVolcano_Groups_G1vsG2.png)
+![EnhancedVolcano_Groups_G2vsG1](figures/EnhancedVolcano_Groups_G2vsG1.png)
 
 ```r
-EnhancedVolcano(res_G1vsG3,
-                lab = rownames(res_G1vsG3),
+EnhancedVolcano(res_G3vsG1,
+                lab = rownames(res_G3vsG1),
                 x = "log2FoldChange",
                 y = "pvalue",
-                title = "Group_1 vs Group_3")
+                title = "Group_3 vs Group_1")
 ```
-![EnhancedVolcano_Groups_G1vsG3.png](figures/EnhancedVolcano_Groups_G1vsG3.png)
+![EnhancedVolcano_Groups_G3vsG1.png](figures/EnhancedVolcano_Groups_G3vsG1.png)
 
 ```r
 EnhancedVolcano(res_G2vsG3,
