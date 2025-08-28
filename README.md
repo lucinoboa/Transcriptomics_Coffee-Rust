@@ -840,6 +840,35 @@ venn.diagram(
 ```
 ![Venn_downregulated_groups](figures/Venn_downregulated.png)
 
+#### Comparison table of up and down-regulated genes in groups. 
+```r
+alpha <- 0.05        # significancia
+lfc_threshold <- 1   # log2FC mínimo para considerar
+
+get_gene_counts <- function(res, alpha=0.05, lfc_threshold=1){
+  up <- sum(res$padj < alpha & res$log2FoldChange > lfc_threshold, na.rm=TRUE)
+  down <- sum(res$padj < alpha & res$log2FoldChange < -lfc_threshold, na.rm=TRUE)
+  total <- up + down
+  return(c(up=up, down=down, total=total))
+}
+
+summary_G1vsG2 <- get_gene_counts(res_G1vsG2)
+summary_G1vsG3 <- get_gene_counts(res_G1vsG3)
+summary_G2vsG3 <- get_gene_counts(res_G2vsG3)
+
+comparisons_summary <- data.frame(
+  Comparison = c("G2 vs G1", "G3 vs G1", "G2 vs G3"),
+  t(rbind(summary_G2vsG1, summary_G3vsG1, summary_G2vsG3))
+)
+comparisons_summary
+```
+```r
+> comparisons_summary
+      Comparison summary_G2vsG1 summary_G3vsG1 summary_G2vsG3
+up      G2 vs G1           3434           1923           1916
+down    G3 vs G1           4681           1990            959
+total   G2 vs G3           8115           3913           2875
+```
 
 ## Step 10: Comparison of gene expression between high and low rust severity
 
