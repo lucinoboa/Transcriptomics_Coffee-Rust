@@ -812,7 +812,7 @@ venn.diagram(
   main.cex = 0.8
 )
 ```
-![Venn_upregulated_groups](/figuresVenn_upregulated.png)
+![Venn_upregulated_groups](figures/Venn_upregulated.png)
 
 #### Venn diagram of down-regulated genes. 
 ```r
@@ -838,7 +838,7 @@ venn.diagram(
   main.cex = 0.8
 )
 ```
-![Venn_downregulated_groups](/figuresVenn_downregulated.png)
+![Venn_downregulated_groups](figures/Venn_downregulated.png)
 
 
 ## Step 10: Comparison of gene expression between high and low rust severity
