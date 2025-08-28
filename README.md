@@ -748,6 +748,99 @@ pheatmap(counts_top,
 ```
 ![pheatmap_topgenes_Groups](figures/pheatmap_topgenes_Groups.png)
 
+### Set the parameters for the Venn diagram. 
+```r
+# 1. Create DGEList
+dge <- DGEList(counts = counts, group = group)
+dge <- calcNormFactors(dge)
+
+# 2. Design matrix (Group1 = reference/control)
+design <- model.matrix(~0 + group)
+colnames(design) <- levels(group)
+
+# 3. Estimate dispersion
+dge <- estimateDisp(dge, design)
+
+# 4. Fit model
+fit <- glmFit(dge, design)
+
+# 5. Define contrasts: G2–G1, G3–G1, G2–G3
+contrast_G2vsG1 <- makeContrasts(Group_2 - Group_1, levels=design)
+contrast_G3vsG1 <- makeContrasts(Group_3 - Group_1, levels=design)
+contrast_G2vsG3 <- makeContrasts(Group_2 - Group_3, levels=design)
+
+lrt_G2vsG1 <- glmLRT(fit, contrast=contrast_G2vsG1)
+lrt_G3vsG1 <- glmLRT(fit, contrast=contrast_G3vsG1)
+lrt_G2vsG3 <- glmLRT(fit, contrast=contrast_G2vsG3)
+
+# 6. Extract DE genes
+DE_G2vsG1 <- topTags(lrt_G2vsG1, n=Inf)$table
+DE_G3vsG1 <- topTags(lrt_G3vsG1, n=Inf)$table
+DE_G2vsG3 <- topTags(lrt_G2vsG3, n=Inf)$table
+
+# Define up/down sets
+DE_G2vsG1_up   <- rownames(DE_G2vsG1[DE_G2vsG1$FDR < 0.05 & DE_G2vsG1$logFC > 1, ])
+DE_G2vsG1_down <- rownames(DE_G2vsG1[DE_G2vsG1$FDR < 0.05 & DE_G2vsG1$logFC < -1, ])
+
+DE_G3vsG1_up   <- rownames(DE_G3vsG1[DE_G3vsG1$FDR < 0.05 & DE_G3vsG1$logFC > 1, ])
+DE_G3vsG1_down <- rownames(DE_G3vsG1[DE_G3vsG1$FDR < 0.05 & DE_G3vsG1$logFC < -1, ])
+
+DE_G2vsG3_up   <- rownames(DE_G2vsG3[DE_G2vsG3$FDR < 0.05 & DE_G2vsG3$logFC > 1, ])
+DE_G2vsG3_down <- rownames(DE_G2vsG3[DE_G2vsG3$FDR < 0.05 & DE_G2vsG3$logFC < -1, ])
+```
+#### Venn diagram of up-regulated genes. 
+```r
+venn.diagram(
+  x = list(
+    "Group 2 vs Group 1" = DE_G2vsG1_up,
+    "Group 3 vs Group 1" = DE_G3vsG1_up,
+    "Group 2 vs Group 3" = DE_G2vsG3_up
+  ),
+  filename = "Venn_upregulated.png",
+  output = TRUE,
+  imagetype = "png",
+  height = 700, width = 700, resolution = 300,
+  col = c("#ff3837", "#ff8383", "#ffdcdc"),
+  fill = c(alpha("#ff3837",0.8), alpha("#ff8383",0.8), alpha("#ffdcdc",0.9)),
+  lwd = 1,
+  cex = 0.7,
+  cat.cex = 0.5,
+  cat.pos = c(-20, 15, 170),
+  cat.dist = c(0.05, 0.05, 0.08),
+  cat.col = c("#ff3837", "#ff8383", "#ffdcdc"),
+  main = "Overlap of Upregulated Genes",
+  main.cex = 0.8
+)
+```
+![Venn_upregulated_groups](/figuresVenn_upregulated.png)
+
+#### Venn diagram of down-regulated genes. 
+```r
+venn.diagram(
+  x = list(
+    "Group2 vs Group1" = DE_G2vsG1_down,
+    "Group3 vs Group1" = DE_G3vsG1_down,
+    "Group2 vs Group3" = DE_G2vsG3_down
+  ),
+  filename = "Venn_downregulated.png",
+  output = TRUE,
+  imagetype = "png",
+  height = 800, width = 800, resolution = 300,
+  col = c("#3a50f4", "#8596fe", "#c8cdfc"),
+  fill = c(alpha("#3a50f4",0.9), alpha("#8596fe",0.9), alpha("#c8cdfc",0.9)),
+  lwd = 1,
+  cex = 0.7,
+  cat.cex = 0.5,
+  cat.pos = c(-30, 20, 170),
+  cat.col = c("#3a50f4", '#8596fe', '#c8cdfc'),
+  cat.dist = c(0.08, 0.08, 0.08),
+  main = "Overlap of Downregulated Genes",
+  main.cex = 0.8
+)
+```
+![Venn_downregulated_groups](/figuresVenn_downregulated.png)
+
+
 ## Step 10: Comparison of gene expression between high and low rust severity
 
 ### Setup the libraries, and the dataset.
@@ -795,7 +888,6 @@ colData <- data.frame(row.names = colnames(countData),
 dds <- DESeqDataSetFromMatrix(countData = countData, 
                               colData = colData, 
                               design = ~ group)
-
 dds <- DESeq(dds)
 ```
 ### Create a DESeq2 dataset object using the defined experimental groups. 
@@ -803,7 +895,6 @@ dds <- DESeq(dds)
 dds <- DESeqDataSetFromMatrix(countData = countData, 
                               colData = colData, 
                               design = ~ group)
-
 dds <- DESeq(dds)
 ```
 
