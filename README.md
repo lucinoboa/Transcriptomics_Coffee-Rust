@@ -649,7 +649,7 @@ group <- factor(group)
 ```r
 > group
     H10     H11     H12     H13     H14     H15     H16      H9      T1      T2      T3      T4      T5 
-Group_3 Group_2 Group_3 Group_2 Group_2 Group_3 Group_2 Group_2 Group_1 Group_1 Group_1 Group_1 Group_1 
+Group_3 Group_2 Group_3 Group_2 Group_2 Group_2 Group_2 Group_2 Group_1 Group_1 Group_1 Group_1 Group_1 
      T6      T7      T8 
 Group_1 Group_1 Group_1 
 Levels: Group_1 Group_2 Group_3
@@ -684,12 +684,12 @@ res_G2vsG3 <- res_G2vsG3[order(res_G2vsG3$padj), ]
 ### PCA plot 
 ```r
 rld <- rlog(dds, blind = TRUE)
-plotPCA(rld, intgroup = "group") +
+plotPCA(rld, intgroup = "group", pcsToUse = 1:2, ntop = 70000) +
   geom_text(aes(label = name), vjust = 1) +
   theme_minimal()
 ```
 
-![plotPCA_groups](figures/plotPCA_groups.png)
+![plotPCA_groups_7000](figures/plotPCA_groups_7000.png)
 
 ### Enhaced Volcano plots for the comparison between groups. 
 
@@ -722,23 +722,23 @@ EnhancedVolcano(res_G2vsG3,
 
 ### MA plots for the comparison between groups. 
 ```r
-plotMA(res_G1vsG2, main = "Group_1 vs Group_2", ylim = c(-20, 20))
+plotMA(res_G2vsG1, main = "Group_2 vs Group_1", ylim = c(-30, 30))
 ```
-![plotMA_Groups_G1vsG2](figures/plotMA_Groups_G1vsG2.png)
+![plotMA_Groups_G1vsG2](figures/plotMA_Groups_G2vsG1.png)
 
 ```r
-plotMA(res_G1vsG3, main = "Group_1 vs Group_3", ylim = c(-30, 30))
+plotMA(res_G3vsG1, main = "Group_3 vs Group_1", ylim = c(-30, 30))
 ```
-![plotMA_Groups_G1vsG3](figures/plotMA_Groups_G1vsG3.png)
+![plotMA](figures/plotMA_Groups_G3vsG1.png)
 
 ```r
 plotMA(res_G2vsG3, main = "Group_2 vs Group_3", ylim = c(-30, 30))
 ```
-![plotMA_Groups_G2vsG3](figures/plotMA_Groups_G12sG3.png)
+![plotMA_Groups_G2vsG3](figures/plotMA_Groups_G2vsG3.png)
 
 ### Heatmap of the most variable genes. 
 ```r
-top_genes <- row.names(res_G1vsG2)[1:20]  # puedes cambiar a res_G1vsG3, etc.
+top_genes <- row.names(res_G2vsG1)[1:20]  # puedes cambiar a res_G1vsG3, etc.
 counts_top <- log2(counts(dds, normalized = TRUE)[top_genes,] + 1)
 
 pheatmap(counts_top, 
@@ -746,7 +746,7 @@ pheatmap(counts_top,
          scale = "row",
          main = "Top 20 genes - Comparison Between Groups")
 ```
-![pheatmap_topgenes_Groups](figures/pheatmap_topgenes_Groups.png)
+![pheatmap_topgenes_Groups](figures/pheatmap_groups.png)
 
 ### Set the parameters for the Venn diagram. 
 ```r
