@@ -689,7 +689,7 @@ plotPCA(rld, intgroup = "group", pcsToUse = 1:2, ntop = 70000) +
   theme_minimal()
 ```
 
-![PCA plot](figures/PCA plot.png)
+![PCA plot](figures/plotPCA_groups.png)
 
 ### Enhaced Volcano plots for the comparison between groups. 
 
