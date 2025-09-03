@@ -748,6 +748,44 @@ pheatmap(counts_top,
 ```
 ![pheatmap_topgenes_Groups](figures/pheatmap_groups.png)
 
+#### Group_2 vs Group_1
+```r
+colData_G2G1 <- colData %>% filter(group %in% c("Group_2", "Group_1"))
+dds_G2G1 <- dds[, rownames(colData_G2G1)]
+res_G2vsG1 <- res_G2vsG1[order(res_G2vsG1$padj), ]
+top_genes_G2vsG1 <- rownames(res_G2vsG1)[1:20]
+counts_top_G2vsG1 <- log2(counts(dds_G2G1, normalized = TRUE)[top_genes_G2vsG1, ] + 1)
+pheatmap(counts_top_G2vsG1,
+         annotation_col = colData_G2G1,  # anotación solo con G1 y G2
+         scale = "row",
+         show_rownames = TRUE,
+         show_colnames = TRUE,
+         clustering_distance_rows = "euclidean",
+         clustering_distance_cols = "euclidean",
+         clustering_method = "complete",
+         main = "Top 20 genes - Group_2 vs Group_1")
+```
+![pheatmap_G2vsG1.png](figures/pheatmap_G2vsG1.png)
+
+#### Group_3 vs Group_1
+```r
+colData_G3G1 <- colData %>% filter(group %in% c("Group_3", "Group_1"))
+dds_G3G1 <- dds[, rownames(colData_G3G1)]
+res_G3vsG1 <- res_G3vsG1[order(res_G3vsG1$padj), ]
+top_genes_G3vsG1 <- rownames(res_G3vsG1)[1:20]
+counts_top_G3vsG1 <- log2(counts(dds_G3G1, normalized = TRUE)[top_genes_G3vsG1, ] + 1)
+pheatmap(counts_top_G3vsG1,
+         annotation_col = colData_G3G1,  # anotación solo con G1 y G3
+         scale = "row",
+         show_rownames = TRUE,
+         show_colnames = TRUE,
+         clustering_distance_rows = "euclidean",
+         clustering_distance_cols = "euclidean",
+         clustering_method = "complete",
+         main = "Top 20 genes - Group_3 vs Group_1")
+```
+![pheatmap_G3vsG1.png](figures/pheatmap_G3vsG1.png)
+
 ### Set the parameters for the Venn diagram. 
 ```r
 # 1. Create DGEList
