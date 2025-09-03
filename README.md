@@ -641,8 +641,8 @@ group <- rep(NA, ncol(countData))
 names(group) <- colnames(countData)
 
 group[c("T1","T2","T3","T4","T5","T6","T7","T8")] <- "Group_1"
-group[c("H9","H11","H13","H14","H16")] <- "Group_2"
-group[c("H10","H12","H15")] <- "Group_3"
+group[c("H9","H11","H13","H14","H15","H16")] <- "Group_2"
+group[c("H10","H12")] <- "Group_3"
 
 group <- factor(group)
 ```
@@ -689,7 +689,7 @@ plotPCA(rld, intgroup = "group", pcsToUse = 1:2, ntop = 70000) +
   theme_minimal()
 ```
 
-![plotPCA_groups_7000](figures/plotPCA_groups_7000.png)
+![PCA plot](figures/PCA plot.png)
 
 ### Enhaced Volcano plots for the comparison between groups. 
 
